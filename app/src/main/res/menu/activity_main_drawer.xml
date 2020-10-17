@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/mainMenu">
+        <item android:id="@+id/home"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="Home" />
+        <item android:id="@+id/courses"
+            android:icon="@drawable/ic_baseline_grain_24"
+            android:title="Courses" />
+        <item android:id="@+id/students"
+            android:icon="@drawable/ic_baseline_airline_seat_recline_normal_24"
+            android:title="Students" />
+        <item android:id="@+id/attendance"
+            android:icon="@drawable/ic_baseline_playlist_add_check_24"
+            android:title="Attendances" />
+        <item android:id="@+id/grades"
+            android:icon="@drawable/ic_baseline_grade_24"
+            android:title="Grades" />
+    </group>
+
+    <group android:id="@+id/secondaryMenu">
+        <item android:id="@+id/settings"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="Settings" />
+        <item android:id="@+id/about"
+            android:icon="@drawable/ic_baseline_info_24"
+            android:title="About" />
+    </group>
+</menu>
