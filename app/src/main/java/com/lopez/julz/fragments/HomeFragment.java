@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.lopez.julz.adapters.ArticlesAdapter;
 import com.lopez.julz.classes.Articles;
+import com.lopez.julz.db.DBHelper;
 import com.lopez.julz.myfirstdumbapplication.R;
 
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class HomeFragment extends Fragment {
     public List<Articles> articlesList;
     public ArticlesAdapter articlesAdapter;
     public RecyclerView.LayoutManager layoutManager;
+
+    public DBHelper dbHelper;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -70,6 +73,8 @@ public class HomeFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         homeRecyclerView.setLayoutManager(layoutManager);
         homeRecyclerView.setAdapter(articlesAdapter);
+
+
 
         loadData();
 

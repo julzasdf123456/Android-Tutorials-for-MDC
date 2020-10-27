@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.lopez.julz.db.DBHelper;
 import com.lopez.julz.fragments.CoursesFragment;
 import com.lopez.julz.fragments.HomeFragment;
 
@@ -30,6 +31,8 @@ public class HomePage extends AppCompatActivity {
     public DrawerLayout drawer;
     public View navHeader;
     private TextView title;
+
+    public DBHelper dbHelper;
 
     public static int navItemIndex = 0;
 
@@ -47,6 +50,14 @@ public class HomePage extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        // Create DB / open DB
+        dbHelper = new DBHelper(this);
+        if (dbHelper.createCoursesTable()) {
+            Toast.makeText(this, "Courses table created", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Courses table creation failed!", Toast.LENGTH_SHORT).show();
+        }
 
         mHandler = new Handler();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

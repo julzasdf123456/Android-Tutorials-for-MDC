@@ -1,17 +1,28 @@
 package com.lopez.julz.fragments;
 
+import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.lopez.julz.adapters.CoursesAdapter;
 import com.lopez.julz.classes.Course;
+import com.lopez.julz.db.DBHelper;
 import com.lopez.julz.myfirstdumbapplication.R;
 
 import java.util.ArrayList;
@@ -34,6 +45,9 @@ public class CoursesFragment extends Fragment {
     public List<Course> courseList;
     public CoursesAdapter coursesAdapter;
     public RecyclerView.LayoutManager layoutManager;
+
+    public DBHelper dbHelper;
+    public FloatingActionButton newCourseBtn;
 
     public CoursesFragment() {
         // Required empty public constructor
@@ -71,18 +85,69 @@ public class CoursesFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(coursesAdapter);
 
+        dbHelper = new DBHelper(getActivity());
+        newCourseBtn = (FloatingActionButton) view.findViewById(R.id.createNewCourse);
+
+        newCourseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createNewCourse();
+            }
+        });
+
         populateData();
 
         return view;
     }
 
     public void populateData() {
-        Course course = new Course("English 101", "Course for English Noobs", R.drawable.ic_nav_header);
-        courseList.add(course);
+        courseList.clear();
 
-        course = new Course("ITE 201", "Course for IT Not So Noobs", R.drawable.ic_img_2);
-        courseList.add(course);
+        Cursor cursor = dbHelper.getCourses();
+        while (cursor.moveToNext()) {
+            courseList.add(new Course(cursor.getString(cursor.getColumnIndex("CourseName")), cursor.getString(cursor.getColumnIndex("CourseDescription")), R.drawable.ic_img_2));
+        }
 
         coursesAdapter.notifyDataSetChanged();
+    }
+
+    public void createNewCourse() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("New Course");
+
+        // Set up the input
+        LinearLayout layout = new LinearLayout(getActivity());
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText coursename = new EditText(getActivity());
+        coursename.setInputType(InputType.TYPE_CLASS_TEXT);
+        coursename.setHint("Type Course Name");
+
+        final EditText courseDescription = new EditText(getActivity());
+        courseDescription.setInputType(InputType.TYPE_CLASS_TEXT);
+        courseDescription.setHint("Type Course Description");
+
+        layout.addView(coursename);
+        layout.addView(courseDescription);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (dbHelper.insertNewCourse(coursename.getText().toString(), courseDescription.getText().toString())) {
+                    dialog.dismiss();
+                    populateData();
+                    Snackbar.make(newCourseBtn, "New Course Inserted!", Snackbar.LENGTH_LONG).show();
+                } else {
+                    Snackbar.make(newCourseBtn, "Saving new course failed!", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 }
